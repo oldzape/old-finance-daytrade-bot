@@ -1,40 +1,83 @@
-import telebot
 import os
-from dotenv import load_dotenv
-from keep_alive import keep_alive
-from analise_completa import obter_dados_binance
+import time
+import threading
+import requests
+import pandas as pd
+from flask import Flask
+import telebot
 
+from dotenv import load_dotenv
 load_dotenv()
 
-bot = telebot.TeleBot(os.getenv("TOKEN"))
-CHAT_ID = int(os.getenv("CHAT_ID"))
+TOKEN = os.getenv("TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+THREAD_ID = int(os.getenv("THREAD_ID"))
 
-TOPICOS = {
-    "Privado do Admin": 32,
-    "Feedback de Trades": 25,
-    "Chat Livre": 5,
-    "Estratégias": 6,
-    "Hold Spot": 18,
-    "Swing Trade Futuros": 14,
-    "Notícias e Análises": 19,
-    "Trade Spot": 16,
-    "Day Trade Futuros": 1,
-    "Solicitar Acesso VIP": 34,
-    "Ajuda": 30,
-    "General": None
-}
+bot = telebot.TeleBot(TOKEN)
+app = Flask(__name__)
 
-@bot.message_handler(commands=['start', 'teste'])
-def send_test(message):
-    for nome, thread_id in TOPICOS.items():
-        texto = f"📊 Análise Técnica Teste enviada para o tópico: **{nome}**"
-        bot.send_message(
-            chat_id=CHAT_ID,
-            message_thread_id=thread_id,
-            text=texto,
-            parse_mode="Markdown"
-        )
+# ========================
+# 🔹 Função Sniper Trades
+# ========================
+def sniper_trades():
+    while True:
+        print("🔫 Executando Sniper Trades...")
+        # Simule sua análise técnica aqui:
+        # RSI, Candle, Volume, EMA20, Divergência...
+        # Coloque sua lógica real depois!
+        bot.send_message(CHAT_ID, "🚨 Sniper Trade detectado!", message_thread_id=THREAD_ID)
+        time.sleep(300)  # 5 minutos
 
-keep_alive()
-print("Bot rodando...")
-bot.infinity_polling()
+# ==============================
+# 🔹 Função Operações Rápidas
+# ==============================
+def operacoes_rapidas():
+    while True:
+        print("⚡ Executando Operações Rápidas...")
+        # Simule sua análise real
+        bot.send_message(CHAT_ID, "🚀 Operação Rápida detectada!", message_thread_id=THREAD_ID)
+        time.sleep(300)  # 5 minutos
+
+# ==============================
+# 🔹 Função Operações do Dia
+# ==============================
+def operacoes_dia():
+    while True:
+        print("📈 Executando Operações do Dia...")
+        # Simule sua análise real
+        bot.send_message(CHAT_ID, "📊 Operação do Dia detectada!", message_thread_id=THREAD_ID)
+        time.sleep(300)  # 5 minutos
+
+# ==============================
+# 🔹 Função News Trading
+# ==============================
+def news_trading():
+    while True:
+        print("📰 Executando News Trading...")
+        # Simule scraping ou RSS aqui
+        bot.send_message(CHAT_ID, "🗞️ News Trading detectado!", message_thread_id=THREAD_ID)
+        time.sleep(300)  # 5 minutos
+
+# ==============================
+# 🔹 Keep Alive com Flask
+# ==============================
+@app.route('/')
+def home():
+    return "Bot rodando!"
+
+def run_flask():
+    app.run(host='0.0.0.0', port=8080)
+
+# ==============================
+# 🔹 Iniciar tudo em threads
+# ==============================
+if __name__ == '__main__':
+    threads = [
+        threading.Thread(target=sniper_trades),
+        threading.Thread(target=operacoes_rapidas),
+        threading.Thread(target=operacoes_dia),
+        threading.Thread(target=news_trading),
+        threading.Thread(target=run_flask)
+    ]
+    for t in threads:
+        t.start()
