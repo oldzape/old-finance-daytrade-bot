@@ -1,7 +1,6 @@
-pyTelegramBotAPI
-python-dotenv
+python-telegram-bot
+Flask
 requests
 pandas
-matplotlib
-flask
-ta
+python-dotenv
+pyTelegramBotAPI
